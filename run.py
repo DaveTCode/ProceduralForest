@@ -3,8 +3,8 @@ import pygame
 from pygame.locals import QUIT
 import sys
 import random
-from renderer import Renderer
-from generator import Forest, Tree, TreeSpecies
+from forest.renderer import Renderer
+from forest.generator import Forest, Tree, TreeSpecies
 
 WIDTH = 800
 HEIGHT = 600
@@ -38,6 +38,9 @@ def run(seed):
     return 0
 
 def create_base_forest(seed, width, height):
+    '''
+        Placeholder for creating the base forest until I decide how to tie that in.
+    '''
     forest = Forest(seed, width, height)
 
     oak = TreeSpecies("oak", 0.1, 10, 1, 0.2, 100, 5)

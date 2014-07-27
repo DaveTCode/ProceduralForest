@@ -123,8 +123,6 @@ class Forest:
                 if row + i >= 0 and row + i < len(self.cells) and col + j >= 0 and col + j < len(self.cells[0]):
                     cells.append(self.cells[row + i][col + j])
 
-        if len(cells) == 0:
-            print (x,y,col,row)
         return cells
 
     def absorb_tree(self, tree, victim):

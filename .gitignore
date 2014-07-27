@@ -1,0 +1,7 @@
+.coverage
+htmlcov
+*.pyc
+cover
+
+*.sublime-workspace
+profile.txt

@@ -1,4 +1,8 @@
 import pygame
+from pygame.locals import *
+
+HEIGHTMAP_MODE = 0
+SLOPE_MODE = 1
 
 class Renderer():
 
@@ -6,37 +10,79 @@ class Renderer():
         self.surface = pygame.display.set_mode((width, height))
         self.width = width
         self.height = height
+        self.mode = HEIGHTMAP_MODE
 
-        self.surface_cache = {}
+    def handle_event(self, event):
+        if event.type == KEYUP:
+            if event.key == K_s:
+                self.mode = SLOPE_MODE
+            elif event.key == K_h:
+                self.mode = HEIGHTMAP_MODE
 
     def render(self, forest, paused):
         self.surface.fill(pygame.Color(255, 255, 255))
-        self._render_terrain(forest)
+
+        if self.mode == HEIGHTMAP_MODE:
+            self._render_terrain(forest)
+        elif self.mode == SLOPE_MODE:
+            self._render_slopes(forest)
 
         for tree in forest.trees:
             self._render_tree(tree)
 
         pygame.display.update()
 
+    def _create_surface_from_2d_array(self, arr, f):
+        '''
+            Utility function to create a grey map from a 2d array of values between 0 and 1.
+        '''
+        surface = pygame.Surface((self.width, self.height))
+        px_array = pygame.PixelArray(surface)
+
+        try:
+            for row in range(self.height):
+                for col in range(self.width):
+                    if row >= len(arr) or col >= len(arr[0]):
+                        px_array[col, row] = pygame.Color(0, 0, 0)
+                    else:
+                        t = f(arr[row][col])
+
+                        px_array[col, row] = pygame.Color(t, t, t)
+        finally:
+            del px_array
+
+        return surface
+
+    def _render_slopes(self, forest):
+        try:
+            surface = forest.terrain.cached_slope_map_surface
+        except AttributeError:
+            def f(x):
+                if x < 0.001:
+                    return 255
+                elif x < 0.005:
+                    return 192
+                elif x < 0.01:
+                    return 128
+                elif x < 0.02:
+                    return 64
+                else:
+                    return 0
+
+            surface = self._create_surface_from_2d_array(forest.terrain.max_slope, f)
+            forest.terrain.cached_slope_map_surface = surface
+
+        self.surface.blit(surface, (0, 0))
+
     def _render_terrain(self, forest):
-        if forest.terrain in self.surface_cache.keys():
-            surface = self.surface_cache[forest.terrain]
-        else:
-            surface = pygame.Surface((self.width, self.height))
-            px_array = pygame.PixelArray(surface)
+        try:
+            surface = forest.terrain.cached_normalized_points_surface
+        except AttributeError:
+            def f(x):
+                return int(x * 255)
 
-            try:
-                for row in range(self.height):
-                    for col in range(self.width):
-                        if row >= forest.height or col >= forest.width:
-                            px_array[col, row] = pygame.Color(0, 0, 0)
-                        else:
-                            t = int(forest.terrain.points[row][col] * 128.0 + 128.0)
-                            px_array[col, row] = pygame.Color(t, t, t)
-            finally:
-                del px_array
-
-            self.surface_cache[forest.terrain] = surface
+            surface = self._create_surface_from_2d_array(forest.terrain.normalized_points, f)
+            forest.terrain.cached_normalized_points_surface = surface
 
         self.surface.blit(surface, (0, 0))
 

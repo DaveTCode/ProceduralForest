@@ -1,3 +1,4 @@
+import itertools
 import math
 import random
 
@@ -13,6 +14,28 @@ class Terrain():
     def __init__(self, points):
         self.points = points
         self.normalized_points = [[1.0 - (x + 1.0) / 2.0 for x in row] for row in self.points]
+        self.max_slope = [[0.0 for x in row] for row in self.points]
+        self._calculate_max_slopes()
+
+    def _calculate_max_slopes(self):
+        for row in range(len(self.points)):
+            for col in range(len(self.points[0])):
+                max_slope = 0.0
+
+                for (i, j) in itertools.combinations_with_replacement([-1,0,1], 2):
+                    if i == 0 == j:
+                        continue
+
+                    x = col + i
+                    y = row + j
+
+                    if x >= 0 and x < len(self.points[0]) and y >= 0 and y < len(self.points):
+                        slope = self.points[row][col] - self.points[y][x]
+                        max_slope = max(slope, max_slope)
+
+                self.max_slope[row][col] = max_slope
+
+
 
 class TerrainGenerator():
     '''

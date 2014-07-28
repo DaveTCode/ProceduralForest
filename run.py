@@ -32,10 +32,13 @@ def run(seed):
                 if event.key == K_SPACE:
                     paused = not paused
 
-        ticks_since_iterate += 1
-        if ticks_since_iterate == 6 and not paused:
-            forest.iterate()
-            ticks_since_iterate = 0
+            renderer.handle_event(event)
+
+        if not paused:
+            ticks_since_iterate += 1
+            if ticks_since_iterate == 6:
+                forest.iterate()
+                ticks_since_iterate = 0
 
         renderer.render(forest, paused)
 
@@ -52,8 +55,8 @@ def create_base_forest(seed, width, height):
     terrain = terrain_gen.generate(width, height)
     forest = Forest(seed, terrain, width, height)
 
-    oak = TreeSpecies("oak", 0.1, 10, 1, 0.2, 100, 5)
-    birch = TreeSpecies("birch", 0.3, 5, 1, 0.2, 30, 5)
+    oak = TreeSpecies("oak", 0.1, 10, 1, 0.2, 100, 5, 0.008)
+    birch = TreeSpecies("birch", 0.3, 5, 1, 0.2, 30, 5, 0.014)
     for i in range(0, 6):
         forest.add_tree(Tree(birch, random.randint(0, width), random.randint(0, height)))
 

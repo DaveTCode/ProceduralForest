@@ -1,6 +1,6 @@
 class TreeSpecies:
 
-    def __init__(self, name, growth_rate, max_size, initial_size, seed_survivability, seed_spread_distance, seed_rate):
+    def __init__(self, name, growth_rate, max_size, initial_size, seed_survivability, seed_spread_distance, seed_rate, slope_threshhold):
         self.name = name
         self.growth_rate = growth_rate
         self.max_size = max_size
@@ -8,3 +8,4 @@ class TreeSpecies:
         self.seed_survivability = seed_survivability
         self.seed_spread_distance = seed_spread_distance
         self.seed_rate = seed_rate
+        self.slope_threshhold = slope_threshhold

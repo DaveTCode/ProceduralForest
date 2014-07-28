@@ -92,15 +92,16 @@ class Forest:
         to_be_added = set()
 
         for i in range(tree.species.seed_rate):
-            r = random.random() * self.terrain.normalized_points[tree.y][tree.x]
-            if r * r < tree.species.seed_survivability:
+
+            if random.random() < tree.species.seed_survivability:
                 d = random.uniform(tree.size, tree.species.seed_spread_distance)
                 direction = random.uniform(0, 2 * math.pi)
 
                 x = tree.x + round(d * math.cos(direction))
                 y = tree.y + round(d * math.sin(direction))
 
-                to_be_added.add(Tree(tree.species, x, y))
+                if x >= 0 and x < self.width and y >= 0 and y < self.height and self.terrain.max_slope[y][x] < tree.species.slope_threshhold:
+                    to_be_added.add(Tree(tree.species, x, y))
 
         return to_be_added
 
@@ -137,5 +138,5 @@ class Forest:
             self.remove_tree(tree)
 
         for tree in to_be_added:
-            if tree.x >= 0 and tree.x < self.width and tree.y >= 0 and tree.y < self.height and not self._is_point_in_tree(tree.x, tree.y):
+            if not self._is_point_in_tree(tree.x, tree.y):
                 self.add_tree(tree)

@@ -1,6 +1,7 @@
 import math
 import unittest
-from forest.generator import TreeSpecies, Tree
+from forest.treespecies import TreeSpecies
+from forest.tree import Tree
 
 
 class TestTree(unittest.TestCase):

@@ -4,7 +4,9 @@ from pygame.locals import QUIT
 import sys
 import random
 from forest.renderer import Renderer
-from forest.generator import Forest, Tree, TreeSpecies
+from forest.treespecies import TreeSpecies
+from forest.tree import Tree
+from forest.forest import Forest
 
 WIDTH = 800
 HEIGHT = 600

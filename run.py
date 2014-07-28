@@ -55,10 +55,10 @@ def create_base_forest(seed, width, height):
     oak = TreeSpecies("oak", 0.1, 10, 1, 0.2, 100, 5)
     birch = TreeSpecies("birch", 0.3, 5, 1, 0.2, 30, 5)
     for i in range(0, 6):
-        forest.trees.append(Tree(birch, random.randint(0, width), random.randint(0, height)))
+        forest.add_tree(Tree(birch, random.randint(0, width), random.randint(0, height)))
 
     for i in range(0, 4):
-        forest.trees.append(Tree(oak, random.randint(0, width), random.randint(0, height)))
+        forest.add_tree(Tree(oak, random.randint(0, width), random.randint(0, height)))
 
     return forest
 

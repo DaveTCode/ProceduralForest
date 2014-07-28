@@ -15,6 +15,8 @@ class Forest:
         for row in range(len(self.cells)):
             self.cells[row] = [[] for _ in range(int(math.ceil(self.width / self.cell_size)))]
 
+        self.test_cache = set()
+
     def add_tree(self, tree):
         '''
             Used to add trees so that they are maintained correctly in the space partitioned cells.
@@ -22,11 +24,16 @@ class Forest:
         self.trees.append(tree)
         self.get_cell(tree).append(tree)
 
+        self.test_cache.add(tree)
+
     def remove_tree(self, tree):
         '''
             Used to remove trees so that they are maintained correctly in the space partitioned
             cells.
         '''
+        if tree not in self.test_cache:
+            raise Exception("Delete without add")
+
         self.trees.remove(tree)
         self.get_cell(tree).remove(tree)
 
@@ -69,14 +76,6 @@ class Forest:
 
         return cells
 
-    def absorb_tree(self, tree, victim):
-        '''
-            Absorb one tree into another by increasing the size of one and removing the other from
-            the forest.
-        '''
-        self.remove_tree(victim)
-        tree.absorb(victim)
-
     def _is_point_in_tree(self, x, y):
         '''
             Check if a given point is contained within a tree. Only need to check current cell plus
@@ -97,6 +96,8 @@ class Forest:
             This function performs that and is therefore responsible for attempting to grow new
             trees.
         '''
+        to_be_added = set()
+
         for i in range(tree.species.seed_rate):
             if random.random() * self.terrain.normalized_points[tree.y][tree.x] < tree.species.seed_survivability:
                 d = random.uniform(tree.size, tree.species.seed_spread_distance)
@@ -105,19 +106,21 @@ class Forest:
                 x = tree.x + round(d * math.cos(direction))
                 y = tree.y + round(d * math.sin(direction))
 
-                if x >= 0 and x < self.width and y >= 0 and y < self.height and not self._is_point_in_tree(x, y):
-                    self.add_tree(Tree(tree.species, x, y))
+                to_be_added.add(Tree(tree.species, x, y))
+
+        return to_be_added
 
     def iterate(self):
         '''
             Perform a single iteration of the forest generation routine.
 
-            This acts on each tree in turn growing, handling collisions post growth and then
+            This acts on each tree in turn; growing, handling collisions post growth and then
             spreading the trees seeds.
         '''
         to_be_removed = set()
+        to_be_added = set()
 
-        for tree in list(self.trees):
+        for tree in self.trees:
             if tree not in to_be_removed:
                 tree.grow()
 
@@ -128,12 +131,23 @@ class Forest:
                         if collide_tree.smaller_than(tree):
                             tree.absorb(collide_tree)
                             to_be_removed.add(collide_tree)
+
+                            if collide_tree not in self.get_cell(collide_tree):
+                                raise Exception("AH")
                         else:
                             collide_tree.absorb(tree)
                             to_be_removed.add(tree)
 
+                            if tree not in self.get_cell(tree):
+                                raise Exception("AH2")
+                            break
+
                 if tree.is_mature() and tree not in to_be_removed:
-                    self.spread_tree_seed(tree)
+                    to_be_added |= self.spread_tree_seed(tree)
 
         for tree in to_be_removed:
             self.remove_tree(tree)
+
+        for tree in to_be_added:
+            if tree.x >= 0 and tree.x < self.width and tree.y >= 0 and tree.y < self.height and not self._is_point_in_tree(tree.x, tree.y):
+                self.add_tree(tree)

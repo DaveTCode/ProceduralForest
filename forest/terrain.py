@@ -12,6 +12,7 @@ class Terrain():
 
     def __init__(self, points):
         self.points = points
+        self.normalized_points = [[1.0 - (x + 1.0) / 2.0 for x in row] for row in self.points]
 
 class TerrainGenerator():
     '''

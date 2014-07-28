@@ -98,7 +98,7 @@ class Forest:
             trees.
         '''
         for i in range(tree.species.seed_rate):
-            if random.random() < tree.species.seed_survivability:
+            if random.random() * self.terrain.normalized_points[tree.y][tree.x] < tree.species.seed_survivability:
                 d = random.uniform(tree.size, tree.species.seed_spread_distance)
                 direction = random.uniform(0, 2 * math.pi)
 
@@ -119,20 +119,20 @@ class Forest:
 
         for tree in list(self.trees):
             if tree not in to_be_removed:
-                if not tree.is_mature():
-                    tree.grow()
+                tree.grow()
 
-                    # Complex - only care about the adjacent cells for collision purposes so flatten trees
-                    # from those into a list to iterate over.
-                    for collide_tree in [t for cell in self.get_all_nboring_cells_by_tree(tree) for t in cell]:
-                        if collide_tree not in to_be_removed and collide_tree != tree and collide_tree.overlapping(tree):
-                            if collide_tree.smaller_than(tree):
-                                tree.absorb(collide_tree)
-                                to_be_removed.add(collide_tree)
-                            else:
-                                collide_tree.absorb(tree)
-                                to_be_removed.add(tree)
-                else:
+                # Complex - only care about the adjacent cells for collision purposes so flatten trees
+                # from those into a list to iterate over.
+                for collide_tree in [t for cell in self.get_all_nboring_cells_by_tree(tree) for t in cell]:
+                    if collide_tree not in to_be_removed and collide_tree != tree and collide_tree.overlapping(tree):
+                        if collide_tree.smaller_than(tree):
+                            tree.absorb(collide_tree)
+                            to_be_removed.add(collide_tree)
+                        else:
+                            collide_tree.absorb(tree)
+                            to_be_removed.add(tree)
+
+                if tree.is_mature() and tree not in to_be_removed:
                     self.spread_tree_seed(tree)
 
         for tree in to_be_removed:

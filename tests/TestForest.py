@@ -11,8 +11,9 @@ class TestForest(unittest.TestCase):
         self.species = TreeSpecies("birch", 0.1, 10, 3, 0.8, 79, 2)
 
     def test_create(self):
-        f = Forest(1, 100, 200)
+        f = Forest(1, None, 100, 200)
         self.assertEqual([], f.trees)
+        self.assertEqual(None, f.terrain)
         self.assertEqual(100, f.width)
         self.assertEqual(200, f.height)
         self.assertEqual(10, f.cell_size)
@@ -20,12 +21,12 @@ class TestForest(unittest.TestCase):
         self.assertEqual(10, len(f.cells[0]))
 
     def test_create_irregular_size(self):
-        f = Forest(1, 17, 29)
+        f = Forest(1, None, 17, 29)
         self.assertEqual(3, len(f.cells))
         self.assertEqual(2, len(f.cells[0]))
 
     def test_add_tree(self):
-        f = Forest(1, 17, 29)
+        f = Forest(1, None, 17, 29)
         t = Tree(self.species, 0, 0)
         f.add_tree(t)
 
@@ -38,7 +39,7 @@ class TestForest(unittest.TestCase):
 
 
     def test_add_tree_2(self):
-        f = Forest(1, 17, 29)
+        f = Forest(1, None, 17, 29)
         t = Tree(self.species, 16, 23)
         f.add_tree(t)
 
@@ -54,7 +55,7 @@ class TestForest(unittest.TestCase):
 
 
     def test_remove_tree(self):
-        f = Forest(1, 17, 29)
+        f = Forest(1, None, 17, 29)
         t = Tree(self.species, 0, 0)
         f.add_tree(t)
         f.remove_tree(t)
@@ -64,7 +65,7 @@ class TestForest(unittest.TestCase):
                 self.assertEqual([], f.cells[row][col])
 
     def test_get_all_nboring_cells_by_tree(self):
-        f = Forest(1, 17, 29)
+        f = Forest(1, None, 17, 29)
         t = Tree(self.species, 0, 0)
         f.add_tree(t)
 

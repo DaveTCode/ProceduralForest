@@ -1,10 +1,11 @@
 import math
 import random
-import forest.tree
+from forest.tree import Tree
 
 class Forest:
 
-    def __init__(self, random_seed, width, height):
+    def __init__(self, random_seed, terrain, width, height):
+        self.terrain = terrain
         self.trees = []
         self.width = width
         self.height = height

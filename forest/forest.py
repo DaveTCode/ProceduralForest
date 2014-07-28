@@ -15,8 +15,6 @@ class Forest:
         for row in range(len(self.cells)):
             self.cells[row] = [[] for _ in range(int(math.ceil(self.width / self.cell_size)))]
 
-        self.test_cache = set()
-
     def add_tree(self, tree):
         '''
             Used to add trees so that they are maintained correctly in the space partitioned cells.
@@ -24,16 +22,11 @@ class Forest:
         self.trees.append(tree)
         self.get_cell(tree).append(tree)
 
-        self.test_cache.add(tree)
-
     def remove_tree(self, tree):
         '''
             Used to remove trees so that they are maintained correctly in the space partitioned
             cells.
         '''
-        if tree not in self.test_cache:
-            raise Exception("Delete without add")
-
         self.trees.remove(tree)
         self.get_cell(tree).remove(tree)
 
@@ -131,15 +124,9 @@ class Forest:
                         if collide_tree.smaller_than(tree):
                             tree.absorb(collide_tree)
                             to_be_removed.add(collide_tree)
-
-                            if collide_tree not in self.get_cell(collide_tree):
-                                raise Exception("AH")
                         else:
                             collide_tree.absorb(tree)
                             to_be_removed.add(tree)
-
-                            if tree not in self.get_cell(tree):
-                                raise Exception("AH2")
                             break
 
                 if tree.is_mature() and tree not in to_be_removed:

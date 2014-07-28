@@ -92,7 +92,8 @@ class Forest:
         to_be_added = set()
 
         for i in range(tree.species.seed_rate):
-            if random.random() * self.terrain.normalized_points[tree.y][tree.x] < tree.species.seed_survivability:
+            r = random.random() * self.terrain.normalized_points[tree.y][tree.x]
+            if r * r < tree.species.seed_survivability:
                 d = random.uniform(tree.size, tree.species.seed_spread_distance)
                 direction = random.uniform(0, 2 * math.pi)
 

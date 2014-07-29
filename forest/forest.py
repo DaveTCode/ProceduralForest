@@ -81,6 +81,22 @@ class Forest:
 
         return False
 
+    def _is_point_too_close_to_tree(self, x, y, species):
+        '''
+            When seeding a new tree we need to check whether there is space for it.
+
+            This is based on the slope of the terrain at that point (hence the magic numbers) in
+            this function.
+        '''
+        s = self.terrain.max_slope[y][x]
+        d = int(10 * s / 0.05)
+
+        for tree in [t for cell in self.get_all_nboring_cells_by_point(x, y) for t in cell]:
+            if abs(tree.x - x) < tree.size + species.initial_size + d:
+                return True
+
+        return False
+
     def spread_tree_seed(self, tree):
         '''
             At each iteration, once a tree is mature, it spreads seeds based on some constants
@@ -100,10 +116,25 @@ class Forest:
                 x = tree.x + round(d * math.cos(direction))
                 y = tree.y + round(d * math.sin(direction))
 
-                if x >= 0 and x < self.width and y >= 0 and y < self.height and self.terrain.max_slope[y][x] < tree.species.slope_threshhold:
+                if self._can_plant_seed(x, y, tree.species):
                     to_be_added.add(Tree(tree.species, x, y))
 
         return to_be_added
+
+    def _can_plant_seed(self, x, y, species):
+        '''
+            Returns true if this location is a valid seed point and false otherwise.
+        '''
+        if x < 0 or x >= self.width or y < 0 or y >= self.height: # Outside of the forest
+            return False
+
+        if self.terrain.max_slope[y][x] > species.slope_threshhold: # Slope too steep for this tree type
+            return False
+
+        if self._is_point_too_close_to_tree(x, y, species): # Don't seed a tree too close to another tree
+            return False
+
+        return True
 
     def iterate(self):
         '''
@@ -138,5 +169,4 @@ class Forest:
             self.remove_tree(tree)
 
         for tree in to_be_added:
-            if not self._is_point_in_tree(tree.x, tree.y):
-                self.add_tree(tree)
+            self.add_tree(tree)

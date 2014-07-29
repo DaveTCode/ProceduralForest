@@ -58,16 +58,7 @@ class Renderer():
             surface = forest.terrain.cached_slope_map_surface
         except AttributeError:
             def f(x):
-                if x < 0.001:
-                    return 255
-                elif x < 0.005:
-                    return 192
-                elif x < 0.01:
-                    return 128
-                elif x < 0.02:
-                    return 64
-                else:
-                    return 0
+                return int(min(255, x * 255 / 0.04))
 
             surface = self._create_surface_from_2d_array(forest.terrain.max_slope, f)
             forest.terrain.cached_slope_map_surface = surface

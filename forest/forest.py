@@ -92,7 +92,8 @@ class Forest:
         d = int(10 * s / 0.05)
 
         for tree in [t for cell in self.get_all_nboring_cells_by_point(x, y) for t in cell]:
-            if abs(tree.x - x) < tree.size + species.initial_size + d:
+            total_distance = tree.size + species.initial_size + d
+            if abs(tree.x - x) < total_distance or abs(tree.y - y) < total_distance:
                 return True
 
         return False

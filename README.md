@@ -1,7 +1,7 @@
 #Requirements
 
 - python 3
-- pygame (find for windows and python 3.4 [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame))
+- pygame - Install using `pip install -r requirements.txt`
 
 #Run
 

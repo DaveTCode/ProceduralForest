@@ -12,6 +12,7 @@ from forest.terrain import TerrainGenerator
 WIDTH = 800
 HEIGHT = 600
 
+
 def run(seed):
     pygame.init()
     fps_clock = pygame.time.Clock()
@@ -47,10 +48,11 @@ def run(seed):
     pygame.quit()
     return 0
 
+
 def create_base_forest(seed, width, height):
-    '''
+    """
         Placeholder for creating the base forest until I decide how to tie that in.
-    '''
+    """
     terrain_gen = TerrainGenerator(seed)
     terrain = terrain_gen.generate(width, height)
     forest = Forest(seed, terrain, width, height)

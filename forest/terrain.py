@@ -3,18 +3,19 @@ import math
 import random
 
 
-grad = [(1, 1, 0),(-1, 1, 0),(1,-1, 0),(-1,-1, 0),
-        (1, 0, 1),(-1, 0, 1),(1, 0,-1),(-1, 0,-1),
-        (0, 1, 1),( 0,-1, 1),(0, 1,-1),( 0,-1,-1)]
+grad = [(1, 1, 0), (-1, 1, 0), (1, -1, 0), (-1, -1, 0),
+        (1, 0, 1), (-1, 0, 1), (1, 0, -1), (-1, 0, -1),
+        (0, 1, 1), (0, -1, 1), (0, 1, -1), (0, -1, -1)]
 F = 0.5 * (math.sqrt(3) - 1.0)
 G = (3.0 - math.sqrt(3)) / 6.0
 
-class Terrain():
+
+class Terrain:
 
     def __init__(self, points):
         self.points = points
         self.normalized_points = [[1.0 - (x + 1.0) / 2.0 for x in row] for row in self.points]
-        self.max_slope = [[0.0 for x in row] for row in self.points]
+        self.max_slope = [[0.0 for _ in row] for row in self.points]
         self._calculate_max_slopes()
 
     def _calculate_max_slopes(self):
@@ -22,30 +23,29 @@ class Terrain():
             for col in range(len(self.points[0])):
                 max_slope = 0.0
 
-                for (i, j) in itertools.combinations_with_replacement([-1,0,1], 2):
+                for (i, j) in itertools.combinations_with_replacement([-1, 0, 1], 2):
                     if i == 0 == j:
                         continue
 
                     x = col + i
                     y = row + j
 
-                    if x >= 0 and x < len(self.points[0]) and y >= 0 and y < len(self.points):
+                    if len(self.points[0]) > x >= 0 and len(self.points) > y >= 0:
                         slope = self.points[row][col] - self.points[y][x]
                         max_slope = max(slope, max_slope)
 
                 self.max_slope[row][col] = max_slope
 
 
-
-class TerrainGenerator():
-    '''
+class TerrainGenerator:
+    """
         This is a basic Simplex Noise generation algorithm based on the reference implementation
         at http://www.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java by Peter Eastman and Stefan
         Gustavson.
 
         Rewritten in pure python to remove dependency on c++ compiler required when attempting to
         install the noise library.
-    '''
+    """
 
     def __init__(self, seed):
         self.seed = seed
@@ -53,10 +53,10 @@ class TerrainGenerator():
         self._randomize_permutation_table()
 
     def generate(self, width, height):
-        '''
+        """
             Generate an entire 2d map of simplex noise based on the permutation table which was
             created when the class was instantiated.
-        '''
+        """
         r = [[0.0 for _ in range(width)] for _ in range(height)]
         f = 3.0 / max(height, width)
         for row in range(height):
@@ -66,10 +66,10 @@ class TerrainGenerator():
         return Terrain(r)
 
     def _generate_point(self, x, y):
-        '''
+        """
             Generates a single point of simplex noise at the given x,y coordinates using the
             permutation table calculated when this class was instantiated.
-        '''
+        """
         s = (x + y) * F
         i, j = int(x + s), int(y + s)
 
@@ -115,10 +115,10 @@ class TerrainGenerator():
         return 70.0 * (n0 + n1 + n2)
 
     def _randomize_permutation_table(self):
-        '''
+        """
             The only random element to the algorithm for generating the terrain is the permutation
             table. This function randomizes the table given the passed in seed.
-        '''
+        """
         p = list(range(256))
         random.shuffle(p)
         self.permutation_table = p * 2

@@ -4,8 +4,8 @@ from pygame.locals import *
 HEIGHTMAP_MODE = 0
 SLOPE_MODE = 1
 
-class Renderer():
 
+class Renderer:
     def __init__(self, width, height):
         self.surface = pygame.display.set_mode((width, height))
         self.width = width
@@ -33,9 +33,9 @@ class Renderer():
         pygame.display.update()
 
     def _create_surface_from_2d_array(self, arr, f):
-        '''
+        """
             Utility function to create a grey map from a 2d array of values between 0 and 1.
-        '''
+        """
         surface = pygame.Surface((self.width, self.height))
         px_array = pygame.PixelArray(surface)
 
@@ -78,10 +78,11 @@ class Renderer():
         self.surface.blit(surface, (0, 0))
 
     def _render_tree(self, tree):
-        color = self._get_tree_color(tree)
+        color = Renderer._get_tree_color(tree)
         pygame.draw.circle(self.surface, color, (tree.x, tree.y), round(tree.size), 0)
 
-    def _get_tree_color(self, tree):
+    @staticmethod
+    def _get_tree_color(tree):
         r = tree.size / tree.species.max_size
         alpha = int(255 - 255 * r)
 
@@ -93,13 +94,12 @@ class Renderer():
             return pygame.Color(0, 0, 0, alpha)
 
 
-class ImageCache():
-
+class ImageCache:
     def __init__(self):
         self.cache = {}
 
     def get_image(self, image_location):
-        if not image_location in self.cache.keys:
+        if image_location not in self.cache.keys:
             self.cache[image_location] = pygame.image.load(image_location)
 
         return self.cache[image_location]
